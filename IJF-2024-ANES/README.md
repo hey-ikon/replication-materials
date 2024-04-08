@@ -1,4 +1,4 @@
-Replication data and codes of "Forecasting presidential elections: Accuracy of ANES voter intentions" in International Journal of Forecasting
+Replication data and codes of "**Forecasting presidential elections: Accuracy of ANES voter intentions**" in the International Journal of Forecasting
 
 codes/
   - 01-mkdata-ANES01.do 
