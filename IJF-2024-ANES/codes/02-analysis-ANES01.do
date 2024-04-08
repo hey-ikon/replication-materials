@@ -93,6 +93,7 @@ twoway (line (actual_turnout_pct reported_turnout_pct) year, lpattern(solid long
 graph export figures/analysis-figure01.png, replace width(3000)
 
 		
+		
 				/**************************/
 				/* Bivariate Scatter Plot */
 				/**************************/	
@@ -104,39 +105,62 @@ graph twoway (lfit actual intended) (scatter actual intended, mlabel(year) mlabs
 	
 graph export figures/analysis-figure02.png, replace width(3000)
 						  
+											 
+						  
 				/************/
 				/* Analysis */
 				/************/	
 				
+				
+*DV: Two-Party Vote Percentage Difference (Reported Party Vote - Actual Party Vote)
+*IV: Voter Turnout Difference (Reported Turned Out - Actual Turnout)
+
+gen diff_turnout = reported_turnout_pct - actual_turnout_pct
+
+reg diff_pct2 diff_turnout
+	estimate store m1
+	
+esttab m1 ///
+	using "tables/analysis-table05.rtf", replace b(%9.3f) ///
+	mlabel("Model 1") ///
+	se stats(N r2 r2_a rmse) ///
+	star(* .05 ** .01 *** .001) ///
+	varlabels(diff_turnout		"Voter Turnout Difference" ///	  
+			  _cons "Constant") ///
+	title("Table 5: Impact of Voter Turnout Differences") ///
+	eqlabel("") nonumbers nomtitles	
+	
+	
+				
 	/* OLS analysis */
 	
 reg actual intended	
-  estimate store m1 
-  
-reg actual reported 
   estimate store m2 
   
-reg actual year
+reg actual reported 
   estimate store m3 
   
-reg actual weight 	
+reg actual year
   estimate store m4 
   
-reg actual face_to_face
+reg actual weight 	
   estimate store m5 
   
+reg actual face_to_face
+  estimate store m6 
+  
 reg actual incum_party
-  estimate store m6
+  estimate store m7
   
 reg actual intended weight	
-  estimate store m7 
+  estimate store m8 
 	
 reg actual intended year weight face_to_face incum_party 	
-  estimate store m8 
+  estimate store m9 
 	
 	/* export results */
 	
-esttab m1 m2 m3 m4 m5 m6 m7 m8 ///
+esttab m2 m3 m4 m5 m6 m7 m8 m9 ///
 	using "tables/analysis-table06.rtf", replace b(%9.3f) ///
 	mlabel("Model 1" "Model 2" " Model 3" "Model 4" "Model 5" ///
 		   "Model 6" "Model 7" "Model 8") ///
@@ -158,7 +182,7 @@ esttab m1 m2 m3 m4 m5 m6 m7 m8 ///
 	
 swilk actual
 
-estimate restore m1
+estimate restore m2
 predict r, resid
 swilk r  /* Result reported in Table 7 */
 drop r	
@@ -175,11 +199,11 @@ gen outliers11 = 0
 replace outliers11 = 1 if abs(r) >=2
 
 reg actual outliers11 intended  
-	estimate store m11
+	estimate store m21
 	
 	/* export results */
 	
-esttab m11 ///
+esttab m21 ///
 	using "tables/analysis-table08.rtf", replace b(%9.3f) ///
 	mlabel("Weighted") ///
 	se stats(N r2 r2_a rmse) ///
@@ -194,7 +218,7 @@ esttab m11 ///
 	
 	/* Cook's D test */
 
-estimate restore m11
+estimate restore m21
 	predict d, cooksd
 	list year d if d > 4/18	/* 1960, 1980 */	
 		
