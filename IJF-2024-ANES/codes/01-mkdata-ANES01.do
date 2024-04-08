@@ -27,6 +27,7 @@ log using codes/01-mkdata-ANES01.log, text replace
 /*							"U.S. President 1976–2020" 								*/
 /* 						(3) US Elections Project, Voter Turnout Data				*/
 /* 						(4) Values of Campbell (2010) Table 1 						*/
+/* 						Tables 2 to 4 can be obtained from the resulting data. 		*/
 /*	******************************************************************************	*/
 
 
@@ -428,4 +429,4 @@ save "data/anes_replicate_campbell_table1_weight.dta", replace
 ***
 log close
 clear
-*exit, STATA
+exit, STATA
